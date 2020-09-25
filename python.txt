@@ -1,0 +1,73 @@
+# REGEX to get ELEMENTS
+# Let's say this is our Regex to split up the lines for each log file.
+regex = re.compile(r".*\[([^:]*):(.*) \-[0-9]{4}\] \"([A-Z]+) (.+?) (HTTP.*\"|\") ([2-5]0[0-9]) .*")
+#To extract the ELEMENTS from each line of the log file, we can use the following expression to split up the line:
+for line in open(FILE_NAME):
+    elements = regex.split(line)
+    # If we use that regex and said print(elements), it would look like this: ['', '24/Oct/1994', '13:43:14', 'GET', '2.gif', 'HTTP/1.0"', '200']
+    # Now if you need to reference the date, time, return code, etc., you can reference by saying elements[i] for which item in the list you're looking for!
+
+    # How to find the DAY OF WEEK from a DATE
+    # Since we've extracted the date using REGEX, we can say the date is equal to elements[1]
+    # The date is a string: 24/Oct/1994, but we need a date object to get the day of the week. To do that, we can use the following function:
+    date = datetime.strptime(elements[1], "%d/%b/%Y")
+    # For more information on how to use datetime, check out these websites: https://www.w3schools.com/python/python_datetime.asp and https://docs.python.org/2/library/datetime.html
+    # Now that we have a proper date object, we can use datetime.weekday() to get the day of the week!
+    weekday = date.weekday()
+    # Now if we printed weekday, it would return 0, which means that 24/Oct/1994 is a Monday.
+
+# How to count the number of unique things in an element
+# We know there are an absolute ton of requests for each day in the log file. What if I only want to count each unique day once?
+# We can start by setting up a dictionary
+dates = {}
+# We know the date is equal to elements[1]
+for line in open(FILE_NAME):
+    unique_dates = elements[1]
+    # We only want them to count 1 time each, so we can say:
+    if unique_dates in dates:
+        continue
+    # Continue will skip the line if the unique date is already in the dictionary.
+    #Now we need to count 1 time for each unique date that isn't in the dictionary.
+    else:
+        dates[unique_dates] = 1
+# This can apply to more than dates, counting any unique item in an element for each line in the log file!
+
+# How to count the number of Mondays in a period
+# So we've now set up a dictionary of unique dates, and we've created a function that can tell us the weekday for each date. We can use these both to count the number of Mondays in the log period!
+# First, we only want the KEYS in the dictionary. We don't need the VALUES, since they are all equal to 1. Let's make a list of keys:
+dates_list = list(dates.keys())
+# Now we need to go through each item in the list, or each date in the log period:
+for i in dates_list:
+    # We need to get the date object for each of the items in the list, since they're still a string, which we did earlier.
+    date_object = date.strptime(i, "%d/%b/%Y")
+    # Now we can convert these to the day of the week!
+    day_of_week = date_object.weekday()
+    # Now all you need to do is count the number of days each occured!
+
+# How to create a file based on information in your line
+# Say I want to create a file based on what animal I have in my list of animals, that are in each line of my text file (see below to see what the lines look like)
+# EXAMPLE LINE IN ANIMALS.TXT [Cow Chicken Duck Moose]
+# If I want to print all of the lines that have 'Cow' in the line into a file named COW.TXT, I could do the following:
+for line in (animals.txt):
+    if "Cow" in line:
+        open("cow.txt", "a").writelines(line)
+        # This will APPEND (hence the argument "a") the line into the file, cow.txt. If it doesn't already exist, it will create it.
+
+# How to sort a dictionary to get the key with the highest and lowest values
+# Let's say I want to count the number of times every animal appears in the first element of the list in animal.txt
+# Let's create a dictionary to count that:
+animals = {}
+for line in open(animals.txt):
+    animal = elements[0]
+    if animal in animals:
+        # If the animal is already listed in the dictionary, I want to count every additional time that animal pops up in the rest of animals.txt:
+        animals[animal] += 1
+    # If the animal hasn't been added to the dictionary, I want to add it so it can be counted
+    else:
+        animals[animal] = 1
+# Now I want to know which animal was counted the most, and which was counted the least. I can do this by saying the following:
+# For DESCENDING ORDER (HIGHEST -> LOWEST):
+sorted(animals, key = animals.get, reverse = True)[:1]
+# For ASCENDING ORDER (LOWEST -> HIGHEST):
+sorted(animals, key = animals.get, reverse = False)[:1]
+# This will sort the animals dictionary based on the number in their value, and take only the first key in each dictionary, based on how they're sorted.
